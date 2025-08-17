@@ -1,0 +1,54 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmers Voice Chatbot</title>
+</head>
+<body>
+  <h2>Farmers Voice Chatbot</h2>
+  <p>Ask your farming questions using mic 🎤, chatbot will reply with voice 🔊</p>
+
+  <button id="startBtn">🎤 Ask Question</button>
+  <p id="question"></p>
+  <p id="answer"></p>
+
+  <script>
+    const questionsAndAnswers = {
+      "भात लागवडीपूर्वी जमिनीची नांगरणी किती वेळा करावी": "साधारण २-३ वेळा नांगरणी करून जमीन भात लागवडीस योग्य होते.",
+      "पाणी धरून ठेवण्यासाठी बांध कसे करावे": "शेताच्या कडेला मजबूत मातीचे बांध करून पाणी साचवावे.",
+      "भातासाठी पाणी साचवणे किती दिवस आधी सुरू करावे": "लागवडीच्या १०-१५ दिवस आधी पाणी साचवणे सुरू करावे."
+    };
+
+    const startBtn = document.getElementById("startBtn");
+    const questionDisplay = document.getElementById("question");
+    const answerDisplay = document.getElementById("answer");
+
+    const recognition = new(window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = "mr-IN";
+
+    startBtn.onclick = () => {
+      recognition.start();
+    };
+
+    recognition.onresult = (event) => {
+      const speechResult = event.results[0][0].transcript;
+      questionDisplay.textContent = "❓ प्रश्न: " + speechResult;
+
+      let foundAnswer = "माफ करा, हा प्रश्न डेटामध्ये नाही. मी शोध घेऊन उत्तर देईन.";
+      for (let q in questionsAndAnswers) {
+        if (speechResult.includes(q)) {
+          foundAnswer = questionsAndAnswers[q];
+        }
+      }
+
+      answerDisplay.textContent = "✅ उत्तर: " + foundAnswer;
+
+      const utterance = new SpeechSynthesisUtterance(foundAnswer);
+      utterance.lang = "mr-IN";
+      speechSynthesis.speak(utterance);
+    };
+  </script>
+</body>
+</html>
